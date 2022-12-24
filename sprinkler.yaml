@@ -201,7 +201,7 @@ switch:
   - platform: restart
     name: irrigazione restart
 
-ext_sensor:
+text_sensor:
   - platform: version
     name: irrigazione esphome version
     hide_timestamp: true    
