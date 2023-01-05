@@ -1,0 +1,257 @@
+substitutions:
+  devicename: irrigazione
+  board: esp01_1m
+  static_ip: 192.168.1.11
+  pulsante_R1: zona_1
+  pulsante_R2: zona_2
+  pulsante_R3: zona_3
+  pulsante_R4: zona_4
+  relay_R1: zona_1 
+  relay_R2: zona_2
+  relay_R3: zona_3 
+  relay_R4: zona_4
+
+packages:
+  device_base: !include .basic8266.yaml
+  wifi: !include .wifi.yaml 
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: True
+
+api:
+  services:
+    - service: set_multiplier
+      variables:
+        multiplier: float
+      then:
+        - sprinkler.set_multiplier:
+            id: $devicename
+            multiplier: !lambda 'return multiplier;'
+    - service: start_full_cycle
+      then:
+        - sprinkler.start_full_cycle: $devicename
+    - service: start_single_valve
+      variables:
+        valve: int
+      then:
+        - sprinkler.start_single_valve:
+            id: $devicename
+            valve_number: !lambda 'return valve;'
+    - service: next_valve
+      then:
+        - sprinkler.next_valve: $devicename
+    - service: previous_valve
+      then:
+        - sprinkler.previous_valve: $devicename
+    - service: shutdown
+      then:
+        - sprinkler.shutdown: $devicename
+
+# Device Specific Configuration
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: 
+        input: true
+        pullup: true  
+      inverted: true
+    on_press:
+      then:
+      - switch.toggle: $relay_R1
+      - switch.turn_off: $relay_R2 
+      - switch.turn_off: $relay_R3
+      - switch.turn_off: $relay_R4
+    name: "tasto $pulsante_R1"
+    
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode: 
+        input: true
+        pullup: true
+      inverted: true
+    on_press:
+      then:
+      - switch.toggle: $relay_R2
+      - switch.turn_off: $relay_R1 
+      - switch.turn_off: $relay_R3
+      - switch.turn_off: $relay_R4  
+    name: "tasto $pulsante_R2"
+        
+  - platform: gpio
+    pin:
+      number: GPIO10
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    on_press:
+      then:
+      - switch.toggle: $relay_R3
+      - switch.turn_off: $relay_R1 
+      - switch.turn_off: $relay_R2
+      - switch.turn_off: $relay_R4  
+    name: "tasto $pulsante_R3"
+    
+  - platform: gpio
+    pin:
+      number: GPIO14
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    on_press:
+      then:
+      - switch.toggle: $relay_R4
+      - switch.turn_off: $relay_R1 
+      - switch.turn_off: $relay_R2
+      - switch.turn_off: $relay_R3  
+    name: "tasto $pulsante_R4"
+
+# not necessary for irrigation since sprinkler take the control of the device but useful for manual activation, think to remove if nont necessary
+switch:
+#  - platform: gpio 
+#    name: "psr"  #switch per relè PSR
+#    pin: GPIOxx  #inserire il pin corretto
+#    id: psr
+#    icon: mdi:water-pump
+#    restore_mode: always_off      
+
+  - platform: gpio
+    name: "$relay_R1"
+    pin: GPIO12
+    id: $relay_R1
+    icon: mdi:sprinkler-variant
+    interlock: [$relay_R2, $relay_R3, $relay_R4]
+    restore_mode: always_off      
+
+  - platform: gpio
+    name: "$relay_R2"
+    pin: GPIO5
+    id: $relay_R2
+    icon: mdi:sprinkler-variant
+    interlock: [$relay_R1, $relay_R3, $relay_R4]
+    restore_mode: always_off    
+
+  - platform: gpio
+    name: "$relay_R3"
+    pin: GPIO4
+    id: $relay_R3
+    icon: mdi:sprinkler-variant
+    interlock: [zona_1, zona_2, zona_4]
+    restore_mode: always_off    
+
+  - platform: gpio
+    name: "$relay_R4"
+    pin: GPIO15
+    id: $relay_R4
+    icon: mdi:sprinkler-variant
+    interlock: [$relay_R1, $relay_R2, $relay_R3]
+    restore_mode: always_off      
+
+sprinkler:
+  - id: $devicename
+    main_switch: "$devicename"
+    auto_advance_switch: "$devicename sequenziale"
+    valve_open_delay: 1s # apre la valvola x secondi dopo che si è chiusa la precedente
+    valves:
+      - valve_switch: "$relay_R1"
+        enable_switch: "abilita $relay_R1"
+        # pump_switch_id: psr
+        run_duration: 60s
+        valve_switch_id: $relay_R1
+      - valve_switch: "$relay_R2"
+        enable_switch: "abilita $relay_R2"
+        # pump_switch_id: psr
+        run_duration: 60s
+        valve_switch_id: $relay_R2
+      - valve_switch: "$relay_R3"
+        enable_switch: "abilita $relay_R3"
+        # pump_switch_id: psr
+        run_duration: 60s
+        valve_switch_id: $relay_R3
+      - valve_switch: "$relay_R4"
+        enable_switch: "abilita $relay_R4"
+        # pump_switch_id: psr
+        run_duration: 60s
+        valve_switch_id: $relay_R4 
+
+number:
+  - platform: template
+    id: irrigazione_multiplier
+    name: "moltiplicatore di durata"
+    min_value: 0.1
+    max_value: 4.0
+    step: 0.1
+    lambda: "return id(irrigazione).multiplier();"
+    set_action:
+      - sprinkler.set_multiplier:
+          id: irrigazione
+          multiplier: !lambda "return x;"
+
+  - platform: template
+    id: irrigazione_repeat
+    name: "ripeti $devicename"
+    min_value: 0
+    max_value: 3
+    step: 1
+    lambda: "return id(irrigazione).repeat().value_or(0);"
+    set_action:
+      - sprinkler.set_repeat:
+          id: irrigazione
+          repeat: !lambda "return x;"
+
+  - platform: template
+    id: irrigazione_zona_1_durata
+    name: "zona 1 minuti"
+    min_value: 1
+    max_value: 15
+    step: 1
+    lambda: "return id(irrigazione).valve_run_duration(0) / 60;"
+    set_action:
+      - sprinkler.set_valve_run_duration:
+          id: irrigazione
+          valve_number: 0
+          run_duration: !lambda "return x * 60;"
+    
+  - platform: template
+    id: irrigazione_zona_2_durata
+    name: "zona 2 minuti"
+    min_value: 1
+    max_value: 15
+    step: 1
+    lambda: "return id(irrigazione).valve_run_duration(1) / 60;"
+    set_action:
+      - sprinkler.set_valve_run_duration:
+          id: irrigazione
+          valve_number: 1
+          run_duration: !lambda "return x * 60;"
+      
+  - platform: template
+    id: irrigazione_zona_3_durata
+    name: "zona 3 minuti"
+    min_value: 1
+    max_value: 15
+    step: 1
+    lambda: "return id(irrigazione).valve_run_duration(2) / 60;"
+    set_action:
+      - sprinkler.set_valve_run_duration:
+          id: irrigazione
+          valve_number: 2
+          run_duration: !lambda "return x * 60;"
+    
+  - platform: template
+    id: irrigazione_zone_4_durata
+    name: "zona 4 minuti"
+    min_value: 1
+    max_value: 15
+    step: 1
+    lambda: "return id(irrigazione).valve_run_duration(3) / 60;"
+    set_action:
+      - sprinkler.set_valve_run_duration:
+          id: irrigazione
+          valve_number: 3
+          run_duration: !lambda "return x * 60;"
