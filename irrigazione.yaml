@@ -111,8 +111,8 @@ binary_sensor:
       - switch.turn_off: $relay_R3  
     name: "tasto $pulsante_R4"
 
-# not necessary for irrigation since sprinkler take the control of the device but useful for manual activation, think to remove if nont necessary
-switch:
+switch: # set switch GPIO "internal: true" to help prevent accidents 
+
 #  - platform: gpio 
 #    name: "psr"  #switch per relè PSR
 #    pin: GPIOxx  #inserire il pin corretto
@@ -126,8 +126,9 @@ switch:
     id: $relay_R1
     icon: mdi:sprinkler-variant
     interlock: [$relay_R2, $relay_R3, $relay_R4]
-    restore_mode: always_off      
-
+    restore_mode: always_off
+    internal: true 
+    
   - platform: gpio
     name: "$relay_R2"
     pin: GPIO5
@@ -135,7 +136,8 @@ switch:
     icon: mdi:sprinkler-variant
     interlock: [$relay_R1, $relay_R3, $relay_R4]
     restore_mode: always_off    
-
+    internal: true
+    
   - platform: gpio
     name: "$relay_R3"
     pin: GPIO4
@@ -143,37 +145,43 @@ switch:
     icon: mdi:sprinkler-variant
     interlock: [zona_1, zona_2, zona_4]
     restore_mode: always_off    
-
+    internal: true
+    
   - platform: gpio
     name: "$relay_R4"
     pin: GPIO15
     id: $relay_R4
     icon: mdi:sprinkler-variant
     interlock: [$relay_R1, $relay_R2, $relay_R3]
-    restore_mode: always_off      
-
+    restore_mode: always_off
+    internal: true      
+    
 sprinkler:
   - id: $devicename
     main_switch: "$devicename"
     auto_advance_switch: "$devicename sequenziale"
     valve_open_delay: 1s # apre la valvola x secondi dopo che si è chiusa la precedente
+    
     valves:
-      - valve_switch: "$relay_R1"
+      - valve_switch: "irrigazione $relay_R1"
         enable_switch: "abilita $relay_R1"
         # pump_switch_id: psr
         run_duration: 60s
         valve_switch_id: $relay_R1
-      - valve_switch: "$relay_R2"
+                   
+      - valve_switch: "irrigazione $relay_R2"
         enable_switch: "abilita $relay_R2"
         # pump_switch_id: psr
         run_duration: 60s
         valve_switch_id: $relay_R2
-      - valve_switch: "$relay_R3"
+
+      - valve_switch: "irrigazione $relay_R3"
         enable_switch: "abilita $relay_R3"
         # pump_switch_id: psr
         run_duration: 60s
         valve_switch_id: $relay_R3
-      - valve_switch: "$relay_R4"
+
+      - valve_switch: "irrigazione $relay_R4"
         enable_switch: "abilita $relay_R4"
         # pump_switch_id: psr
         run_duration: 60s
