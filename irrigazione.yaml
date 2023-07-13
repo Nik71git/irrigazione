@@ -166,34 +166,62 @@ sprinkler:
       - valve_switch: "irrigazione $relay_R1"
         enable_switch: "abilita $relay_R1"
         # pump_switch_id: psr
-        run_duration: 60s
+        # run_duration: 60s
+        run_duration_number:
+          id: zona1_durata
+          name: "durata $relay_R1"
+          initial_value: 5
+          min_value: 1
+          max_value: 15
+          unit_of_measurement: min
         valve_switch_id: $relay_R1
                    
       - valve_switch: "irrigazione $relay_R2"
         enable_switch: "abilita $relay_R2"
         # pump_switch_id: psr
-        run_duration: 60s
+        # run_duration: 60s
+        run_duration_number:
+          id: zona2_durata
+          name: "durata $relay_R2"
+          initial_value: 5
+          min_value: 1
+          max_value: 15
+          unit_of_measurement: min
         valve_switch_id: $relay_R2
 
       - valve_switch: "irrigazione $relay_R3"
         enable_switch: "abilita $relay_R3"
         # pump_switch_id: psr
-        run_duration: 60s
+        # run_duration: 60s
+        run_duration_number:
+          id: zona3_durata
+          name: "durata $relay_R3"
+          initial_value: 5
+          min_value: 1
+          max_value: 15
+          unit_of_measurement: min
         valve_switch_id: $relay_R3
 
       - valve_switch: "irrigazione $relay_R4"
         enable_switch: "abilita $relay_R4"
         # pump_switch_id: psr
-        run_duration: 60s
+        # run_duration: 60s
+        run_duration_number:
+          id: zona4_durata
+          name: "durata $relay_R4"
+          initial_value: 5
+          min_value: 1
+          max_value: 15
+          unit_of_measurement: min
         valve_switch_id: $relay_R4 
 
 number:
   - platform: template
     id: irrigazione_multiplier
     name: "moltiplicatore di durata"
-    min_value: 0.1
+    min_value: 1
     max_value: 4.0
-    step: 0.1
+    step: 0.5
     lambda: "return id(irrigazione).multiplier();"
     set_action:
       - sprinkler.set_multiplier:
@@ -212,54 +240,55 @@ number:
           id: irrigazione
           repeat: !lambda "return x;"
 
-  - platform: template
-    id: irrigazione_zona_1_durata
-    name: "zona 1 minuti"
-    min_value: 1
-    max_value: 15
-    step: 1
-    lambda: "return id(irrigazione).valve_run_duration(0) / 60;"
-    set_action:
-      - sprinkler.set_valve_run_duration:
-          id: irrigazione
-          valve_number: 0
-          run_duration: !lambda "return x * 60;"
-    
-  - platform: template
-    id: irrigazione_zona_2_durata
-    name: "zona 2 minuti"
-    min_value: 1
-    max_value: 15
-    step: 1
-    lambda: "return id(irrigazione).valve_run_duration(1) / 60;"
-    set_action:
-      - sprinkler.set_valve_run_duration:
-          id: irrigazione
-          valve_number: 1
-          run_duration: !lambda "return x * 60;"
-      
-  - platform: template
-    id: irrigazione_zona_3_durata
-    name: "zona 3 minuti"
-    min_value: 1
-    max_value: 15
-    step: 1
-    lambda: "return id(irrigazione).valve_run_duration(2) / 60;"
-    set_action:
-      - sprinkler.set_valve_run_duration:
-          id: irrigazione
-          valve_number: 2
-          run_duration: !lambda "return x * 60;"
-    
-  - platform: template
-    id: irrigazione_zone_4_durata
-    name: "zona 4 minuti"
-    min_value: 1
-    max_value: 15
-    step: 1
-    lambda: "return id(irrigazione).valve_run_duration(3) / 60;"
-    set_action:
-      - sprinkler.set_valve_run_duration:
-          id: irrigazione
-          valve_number: 3
-          run_duration: !lambda "return x * 60;"
+  #- platform: template
+  #  id: irrigazione_zona_1_durata
+  #  name: "zona 1 minuti"
+  #  min_value: 1
+  #  max_value: 15
+  #  step: 1
+  #  lambda: "return id(irrigazione).valve_run_duration(0) / 60;"
+  #  set_action:
+  #    - sprinkler.set_valve_run_duration:
+  #        id: irrigazione
+  #        valve_number: 0
+  #        run_duration: !lambda "return x * 60;"
+  #  
+  #- platform: template
+  #  id: irrigazione_zona_2_durata
+  #  name: "zona 2 minuti"
+  #  min_value: 1
+  #  max_value: 15
+  #  step: 1
+  #  lambda: "return id(irrigazione).valve_run_duration(1) / 60;"
+  #  set_action:
+  #    - sprinkler.set_valve_run_duration:
+  #        id: irrigazione
+  #        valve_number: 1
+  #        run_duration: !lambda "return x * 60;"
+  #    
+  #- platform: template
+  #  id: irrigazione_zona_3_durata
+  #  name: "zona 3 minuti"
+  #  min_value: 1
+  #  max_value: 15
+  #  step: 1
+  #  lambda: "return id(irrigazione).valve_run_duration(2) / 60;"
+  #  set_action:
+  #    - sprinkler.set_valve_run_duration:
+  #        id: irrigazione
+  #        valve_number: 2
+  #        run_duration: !lambda "return x * 60;"
+  #  
+  #- platform: template
+  #  id: irrigazione_zone_4_durata
+  #  name: "zona 4 minuti"
+  #  min_value: 1
+  #  max_value: 15
+  #  step: 1
+  #  lambda: "return id(irrigazione).valve_run_duration(3) / 60;"
+  #  set_action:
+  #    - sprinkler.set_valve_run_duration:
+  #        id: irrigazione
+  #        valve_number: 3
+  #        run_duration: !lambda "return x * 60;"
+  
