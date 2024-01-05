@@ -115,14 +115,16 @@ switch: # set switch GPIO "internal: true" to help prevent accidents
 
 #  - platform: gpio 
 #    name: "psr"  #switch per relè PSR
-#    pin: GPIOxx  #inserire il pin corretto
+#    pin:
+#      number: GPIOxx  #inserire il pin corretto
 #    id: psr
 #    icon: mdi:water-pump
 #    restore_mode: always_off      
 
   - platform: gpio
     name: "$relay_R1"
-    pin: GPIO12
+    pin: 
+      number: GPIO12
     id: $relay_R1
     icon: mdi:sprinkler-variant
     interlock: [$relay_R2, $relay_R3, $relay_R4]
@@ -131,7 +133,8 @@ switch: # set switch GPIO "internal: true" to help prevent accidents
     
   - platform: gpio
     name: "$relay_R2"
-    pin: GPIO5
+    pin:
+      number: GPIO5
     id: $relay_R2
     icon: mdi:sprinkler-variant
     interlock: [$relay_R1, $relay_R3, $relay_R4]
@@ -140,7 +143,8 @@ switch: # set switch GPIO "internal: true" to help prevent accidents
     
   - platform: gpio
     name: "$relay_R3"
-    pin: GPIO4
+    pin: 
+      number: GPIO4
     id: $relay_R3
     icon: mdi:sprinkler-variant
     interlock: [zona_1, zona_2, zona_4]
@@ -149,7 +153,8 @@ switch: # set switch GPIO "internal: true" to help prevent accidents
     
   - platform: gpio
     name: "$relay_R4"
-    pin: GPIO15
+    pin:
+      number: GPIO15
     id: $relay_R4
     icon: mdi:sprinkler-variant
     interlock: [$relay_R1, $relay_R2, $relay_R3]
