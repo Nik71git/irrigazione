@@ -1,7 +1,7 @@
 substitutions:
   devicename: irrigazione
   board: esp01_1m
-  static_ip: 192.168.1.11
+  static_ip: 192.168.178.213
   pulsante_R1: zona_1
   pulsante_R2: zona_2
   pulsante_R3: zona_3
@@ -180,7 +180,7 @@ sprinkler:
           max_value: 15
           unit_of_measurement: min
         valve_switch_id: $relay_R1
-                   
+        
       - valve_switch: "irrigazione $relay_R2"
         enable_switch: "abilita $relay_R2"
         # pump_switch_id: psr
@@ -193,7 +193,7 @@ sprinkler:
           max_value: 15
           unit_of_measurement: min
         valve_switch_id: $relay_R2
-
+        
       - valve_switch: "irrigazione $relay_R3"
         enable_switch: "abilita $relay_R3"
         # pump_switch_id: psr
@@ -206,7 +206,7 @@ sprinkler:
           max_value: 15
           unit_of_measurement: min
         valve_switch_id: $relay_R3
-
+        
       - valve_switch: "irrigazione $relay_R4"
         enable_switch: "abilita $relay_R4"
         # pump_switch_id: psr
@@ -218,8 +218,8 @@ sprinkler:
           min_value: 1
           max_value: 15
           unit_of_measurement: min
-        valve_switch_id: $relay_R4 
-
+        valve_switch_id: $relay_R4
+        
 number:
   - platform: template
     id: irrigazione_multiplier

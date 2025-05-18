@@ -17,11 +17,13 @@ logger:
 
 # Enable Home Assistant API
 api:
+  reboot_timeout: 10min #default 15min
 #  encryption:
 #    key: !secret api_key
 
 ota:
-  password: !secret ota_password
+  - platform: esphome
+    password: !secret ota_password
 
 binary_sensor:
   - platform: status
@@ -40,4 +42,4 @@ time:
   - platform: sntp
     id: sntp_time
     timezone: Europe/Rome
-    servers: 192.168.1.1    
+    servers: 192.168.178.1    
