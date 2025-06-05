@@ -165,7 +165,7 @@ sprinkler:
   - id: $devicename
     main_switch: "$devicename"
     auto_advance_switch: "$devicename sequenziale"
-    valve_open_delay: 1s # apre la valvola x secondi dopo che si è chiusa la precedente
+    valve_open_delay: 2s # apre la valvola x secondi dopo che si è chiusa la precedente
     
     valves:
       - valve_switch: "irrigazione $relay_R1"
