@@ -1,5 +1,7 @@
 substitutions:
   devicename: irrigazione
+  ha_name: "controllo irrigazione"
+  ha_area: "giardino"
   board: esp01_1m
   static_ip: 192.168.178.213
   pulsante_R1: zona_1
@@ -12,8 +14,8 @@ substitutions:
   relay_R4: zona_4
 
 packages:
-  device_base: !include .basic8266.yaml
-  wifi: !include .wifi.yaml 
+  device_base: !include packages/basic8266.yaml
+  wifi: !include packages/wifi.yaml 
 
 status_led:
   pin:
@@ -165,7 +167,7 @@ sprinkler:
   - id: $devicename
     main_switch: "$devicename"
     auto_advance_switch: "$devicename sequenziale"
-    valve_open_delay: 2s # apre la valvola x secondi dopo che si è chiusa la precedente
+    valve_open_delay: 4s # apre la valvola x secondi dopo che si è chiusa la precedente
     
     valves:
       - valve_switch: "irrigazione $relay_R1"
@@ -243,57 +245,4 @@ number:
     set_action:
       - sprinkler.set_repeat:
           id: irrigazione
-          repeat: !lambda "return x;"
-
-  #- platform: template
-  #  id: irrigazione_zona_1_durata
-  #  name: "zona 1 minuti"
-  #  min_value: 1
-  #  max_value: 15
-  #  step: 1
-  #  lambda: "return id(irrigazione).valve_run_duration(0) / 60;"
-  #  set_action:
-  #    - sprinkler.set_valve_run_duration:
-  #        id: irrigazione
-  #        valve_number: 0
-  #        run_duration: !lambda "return x * 60;"
-  #  
-  #- platform: template
-  #  id: irrigazione_zona_2_durata
-  #  name: "zona 2 minuti"
-  #  min_value: 1
-  #  max_value: 15
-  #  step: 1
-  #  lambda: "return id(irrigazione).valve_run_duration(1) / 60;"
-  #  set_action:
-  #    - sprinkler.set_valve_run_duration:
-  #        id: irrigazione
-  #        valve_number: 1
-  #        run_duration: !lambda "return x * 60;"
-  #    
-  #- platform: template
-  #  id: irrigazione_zona_3_durata
-  #  name: "zona 3 minuti"
-  #  min_value: 1
-  #  max_value: 15
-  #  step: 1
-  #  lambda: "return id(irrigazione).valve_run_duration(2) / 60;"
-  #  set_action:
-  #    - sprinkler.set_valve_run_duration:
-  #        id: irrigazione
-  #        valve_number: 2
-  #        run_duration: !lambda "return x * 60;"
-  #  
-  #- platform: template
-  #  id: irrigazione_zone_4_durata
-  #  name: "zona 4 minuti"
-  #  min_value: 1
-  #  max_value: 15
-  #  step: 1
-  #  lambda: "return id(irrigazione).valve_run_duration(3) / 60;"
-  #  set_action:
-  #    - sprinkler.set_valve_run_duration:
-  #        id: irrigazione
-  #        valve_number: 3
-  #        run_duration: !lambda "return x * 60;"
-  
+          repeat: !lambda "return x;"  

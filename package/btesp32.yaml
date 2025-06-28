@@ -1,15 +1,14 @@
-# Device esp8266 Basic Configuration
+# Device ESP32 Basic Configuration
 esphome:
   name: $devicename
   friendly_name: $ha_name
   area: $ha_area
 
-esp8266:
+esp32:
   board: $board
   framework:
+    type: esp-idf # usare con BLE tracker
     version: recommended
-  board_flash_mode: dout 
-  restore_from_flash: true 
 
 preferences:
   flash_write_interval: 90s
@@ -23,18 +22,19 @@ api:
 #  encryption:
 #    key: !secret api_key
 
+# Enalble Over The Air
 ota:
   - platform: esphome
     password: !secret ota_password
 
 binary_sensor:
   - platform: status
-    id: stato
+    id: stato 
     name: "stato"
   
 text_sensor:
   - platform: version
-    id: esphome_version
+    id: esphome_version 
     name: "esphome version"
     hide_timestamp: true    
 
@@ -47,4 +47,11 @@ time:
   - platform: sntp
     id: sntp_time
     timezone: Europe/Rome
-    servers: 192.168.178.1    
+    servers: 192.168.178.1
+
+sensor:
+  - platform: internal_temperature
+    id: temp_esp
+    name: "temperatura chip"    
+    update_interval: 120s
+    

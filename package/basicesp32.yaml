@@ -1,15 +1,14 @@
-# Device esp8266 Basic Configuration
+# Device ESP32 Basic Configuration
 esphome:
   name: $devicename
   friendly_name: $ha_name
   area: $ha_area
 
-esp8266:
+esp32:
   board: $board
   framework:
+    type: arduino # va bene per tutti gli usi eccetto BLE proxy e tracker
     version: recommended
-  board_flash_mode: dout 
-  restore_from_flash: true 
 
 preferences:
   flash_write_interval: 90s
@@ -23,6 +22,7 @@ api:
 #  encryption:
 #    key: !secret api_key
 
+# Enalble Over The Air
 ota:
   - platform: esphome
     password: !secret ota_password
@@ -47,4 +47,11 @@ time:
   - platform: sntp
     id: sntp_time
     timezone: Europe/Rome
-    servers: 192.168.178.1    
+    servers: 192.168.178.1
+
+sensor:
+  - platform: internal_temperature
+    id: temp_esp
+    name: "temperatura chip"    
+    update_interval: 120s
+    
