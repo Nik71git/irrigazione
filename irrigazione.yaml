@@ -22,36 +22,57 @@ status_led:
     number: GPIO13
     inverted: True
 
+# API service che possono essere usati in Home Assistant
 api:
   services:
-    - service: set_multiplier
-      variables:
-        multiplier: float
-      then:
-        - sprinkler.set_multiplier:
-            id: $devicename
-            multiplier: !lambda 'return multiplier;'
-    - service: start_full_cycle
-      then:
-        - sprinkler.start_full_cycle: $devicename
-    - service: start_single_valve
-      variables:
-        valve: int
-      then:
-        - sprinkler.start_single_valve:
-            id: $devicename
-            valve_number: !lambda 'return valve;'
-    - service: next_valve
-      then:
-        - sprinkler.next_valve: $devicename
-    - service: previous_valve
-      then:
-        - sprinkler.previous_valve: $devicename
+    ## moltiplicatore di durata zone
+    #- service: set_multiplier
+    #  variables:
+    #    multiplier: float
+    #  then:
+    #    - sprinkler.set_multiplier:
+    #        id: $devicename
+    #        multiplier: !lambda 'return multiplier;'
+
+    # ripetizione irrigazione
+    #- service: set_repeat
+    #  variables:
+    #    repeat: float
+    #  then:
+    #    - sprinkler.set_repeat:
+    #        id: $devicename
+    #        repeat: !lambda 'return repeat;'
+
+    # irrigazione sequenziale
+    #- service: start_full_cycle
+    #  then:
+    #    - sprinkler.start_full_cycle: $devicename
+        
+    ## irrigazione indipendente    
+    #- service: start_single_valve
+    #  variables:
+    #    valve: int
+    #  then:
+    #    - sprinkler.start_single_valve:
+    #        id: $devicename
+    #        valve_number: !lambda 'return valve;'
+
+    ## valvola successiva        
+    #- service: next_valve
+    #  then:
+    #    - sprinkler.next_valve: $devicename
+
+    ## valvola precedente    
+    #- service: previous_valve
+    #  then:
+    #    - sprinkler.previous_valve: $devicename
+
+    # spegnimento irrigazione    
     - service: shutdown
       then:
         - sprinkler.shutdown: $devicename
 
-# Device Specific Configuration
+# configurazione specifica Sonoff 4CH Pro R2
 binary_sensor:
   - platform: gpio
     pin:
@@ -113,7 +134,7 @@ binary_sensor:
       - switch.turn_off: $relay_R3  
     name: "tasto $pulsante_R4"
 
-switch: # set switch GPIO "internal: true" to help prevent accidents 
+switch: # settare gli switch GPIO "internal: true" per evitare conflitti di attivazione 
 
 #  - platform: gpio 
 #    name: "psr"  #switch per relè PSR
@@ -149,7 +170,7 @@ switch: # set switch GPIO "internal: true" to help prevent accidents
       number: GPIO4
     id: $relay_R3
     icon: mdi:sprinkler-variant
-    interlock: [zona_1, zona_2, zona_4]
+    interlock: [$relay_R1, $relay_R2, $relay_R4]
     restore_mode: always_off    
     internal: true
     
@@ -162,12 +183,13 @@ switch: # set switch GPIO "internal: true" to help prevent accidents
     interlock: [$relay_R1, $relay_R2, $relay_R3]
     restore_mode: always_off
     internal: true      
-    
+
+# settaggio irrigatori    
 sprinkler:
   - id: $devicename
     main_switch: "$devicename"
-    auto_advance_switch: "$devicename sequenziale"
-    valve_open_delay: 4s # apre la valvola x secondi dopo che si è chiusa la precedente
+    auto_advance_switch: "$devicename sequenziale"    
+    valve_open_delay: 2s # apre la valvola x secondi dopo che si è chiusa la precedente
     
     valves:
       - valve_switch: "irrigazione $relay_R1"
@@ -177,9 +199,9 @@ sprinkler:
         run_duration_number:
           id: zona1_durata
           name: "durata $relay_R1"
-          initial_value: 5
+          initial_value: 10
           min_value: 1
-          max_value: 15
+          max_value: 20
           unit_of_measurement: min
         valve_switch_id: $relay_R1
         
@@ -190,9 +212,9 @@ sprinkler:
         run_duration_number:
           id: zona2_durata
           name: "durata $relay_R2"
-          initial_value: 5
+          initial_value: 10
           min_value: 1
-          max_value: 15
+          max_value: 20
           unit_of_measurement: min
         valve_switch_id: $relay_R2
         
@@ -203,9 +225,9 @@ sprinkler:
         run_duration_number:
           id: zona3_durata
           name: "durata $relay_R3"
-          initial_value: 5
+          initial_value: 10
           min_value: 1
-          max_value: 15
+          max_value: 20
           unit_of_measurement: min
         valve_switch_id: $relay_R3
         
@@ -216,12 +238,12 @@ sprinkler:
         run_duration_number:
           id: zona4_durata
           name: "durata $relay_R4"
-          initial_value: 5
+          initial_value: 10
           min_value: 1
-          max_value: 15
+          max_value: 20
           unit_of_measurement: min
         valve_switch_id: $relay_R4
-        
+
 number:
   - platform: template
     id: irrigazione_multiplier
