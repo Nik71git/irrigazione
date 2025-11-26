@@ -3,7 +3,7 @@ substitutions:
   ha_name: "controllo irrigazione"
   ha_area: "giardino"
   board: esp01_1m
-  static_ip: 192.168.178.213
+  #static_ip: 192.168.178.213
   pulsante_R1: zona_1
   pulsante_R2: zona_2
   pulsante_R3: zona_3
@@ -48,14 +48,14 @@ api:
     #  then:
     #    - sprinkler.start_full_cycle: $devicename
         
-    ## irrigazione indipendente    
-    #- service: start_single_valve
-    #  variables:
-    #    valve: int
-    #  then:
-    #    - sprinkler.start_single_valve:
-    #        id: $devicename
-    #        valve_number: !lambda 'return valve;'
+    ## irrigazione singola    
+    - service: start_single_valve
+      variables:
+        valve: int
+      then:
+        - sprinkler.start_single_valve:
+            id: $devicename
+            valve_number: !lambda 'return valve;'
 
     ## valvola successiva        
     #- service: next_valve
