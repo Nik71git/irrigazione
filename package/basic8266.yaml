@@ -23,9 +23,16 @@ api:
 #  encryption:
 #    key: !secret api_key
 
+#web_server: # sconsigliato su chip 8266
+# port: 80
+# auth:
+#    username: !secret web_server_username
+#    password: !secret web_server_password
+
 ota:
   - platform: esphome
     password: !secret ota_password
+#  - platform: web_server
 
 binary_sensor:
   - platform: status
@@ -37,14 +44,16 @@ text_sensor:
     id: esphome_version
     name: "esphome version"
     hide_timestamp: true    
+    entity_category: diagnostic
+
+sensor:
+  - platform: uptime
+    id: tempo_uptime
+    name: "uptime"
+    entity_category: diagnostic
 
 switch:
   - platform: restart
     id: restart_switch
     name: "restart"
-    
-time:
-  - platform: sntp
-    id: sntp_time
-    timezone: Europe/Rome
-    servers: 192.168.178.1    
+    entity_category: diagnostic   
